@@ -1,0 +1,7 @@
+// Gloval styling
+$color-primary: deepskyblue;
+
+body{
+  // background: lighten(blue, 10%);
+  @include contrasted($color-primary);
+}
