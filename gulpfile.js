@@ -27,11 +27,11 @@ var config = {
 
 var paths = {
   fonts: {
-    src: config.dev + '/fonts/*',
+    src: config.dev + '/fonts/**',
     dest: config.dist + '/fonts'
   },
   images: {
-    src: config.dev + '/images/*',
+    src: config.dev + '/images/**',
     dest: config.dist + '/imges'
   },
   scripts: {
@@ -116,12 +116,52 @@ gulp.task('compress', ['concat'], function() {
     .pipe(livereload());
 });
 
+// Copies everything in the client folder except templates, Sass, and JS
+gulp.task('copy:fonts', function() {
+  return gulp.src(paths.fonts.src, {
+  // base: './app/'
+  })
+    .pipe(gulp.dest(paths.fonts.dest));
+});
+
+// Copies everything in the client folder except templates, Sass, and JS
+gulp.task('copy:images', function() {
+  return gulp.src(paths.images.src, {
+  // base: './app/'
+  })
+    .pipe(gulp.dest(paths.images.dest));
+});
+
 // Copies all .html in the app folder
 gulp.task('copy:template', function() {
   return gulp.src(config.dev + '/*.html', {
   // base: './app/'
   })
     .pipe(gulp.dest(config.dist));
+});
+
+// Gulp task copy:images >imagemin
+// Run gulp duplicate with flag(--production)
+gulp.task('duplicate:images', ['copy:images'], function() {
+  return gulp.src(paths.images.src + '/*.{png,jpg,gif,svg}')
+    .pipe($.if(isProduction, imagemin({
+        progressive: true,
+        svgoPlugins: [{removeViewBox: false}]
+    })))
+    .pipe(gulp.dest(paths.images.dest))
+    .pipe(livereload());
+});
+
+// Gulp task copy:template >minify-html
+// Run gulp duplicate with flag(--production)
+gulp.task('duplicate:html', ['copy:template'], function() {
+  return gulp.src(config.dist + '/*.html')
+    .pipe($.if(isProduction, minifyHTML({
+    conditionals: true,
+    spare:true
+    })))
+    .pipe(gulp.dest(config.dist))
+    .pipe(livereload());
 });
 
 // Gulp plugin to run a local webserver with LiveReload
@@ -143,7 +183,12 @@ gulp.task('watch', function () {
   livereload.listen();
   gulp.watch(paths.scripts.src, ['compress']);
   gulp.watch(paths.styles.src, ['stylish']);
+  gulp.watch(paths.images.src + '/*.{png,jpg,gif,svg}', ['duplicate:images']);
+  gulp.watch(config.dev + '/*.html', ['duplicate:html']);
 });
+
+// 4. Custom Tasks
+// - - - - - - - - - - - - - - -
 
 // Dev task
 gulp.task('dev', ['initial task'], function() {
@@ -151,13 +196,14 @@ gulp.task('dev', ['initial task'], function() {
 });
 // Serve task
 gulp.task('serve', function() {
-  runSequence('server', 'watch');
+  var launchApp = runSequence('server', 'watch');
+  setTimeout(launchApp, 500);
 });
 // Build task with flag(--production)
 gulp.task('build', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:template');
+  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html');
 });
 // Default task
 gulp.task('default', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:template', 'server', 'watch');
+  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'server', 'watch');
 });
