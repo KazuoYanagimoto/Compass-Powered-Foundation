@@ -16,7 +16,7 @@ You'll need the following applications installed to get started.
 1: Clone this repository, where `myapp` is the name of your project.
 
 ```bash
-git clone https://github.com/zurb/foundation-apps-template.git myapp
+git clone https://github.com/KazuoYanagimoto/Compass-Powered-Foundation.git myapp
 ```
 
 2: Change into the directory, and install the dependencies.
@@ -39,11 +39,13 @@ bower install
 Gulp
 ```
 
-> This will compile the Sass(by using Compass) and assembles all the necessary files to launch your web-app with localhost:8080 for you. 
-When you change files, the appropriate Gulp task will run to build new files.
+> This will compile the Sass(by using Compass) and assembles all the necessary files to launch your web-app with localhost:8080. 
+When you change files, the appropriate Gulp task will run to build new files for you.
 
-4: To run the compiling process once, without watching any files, use the `build` command.
+4: To run the compiling process without watching any files, use the `build` command.
 
 ```bash
 Gulp build
 ```
+
+> You can also use the 'build' command with option flag(--production) for distribution ready.
