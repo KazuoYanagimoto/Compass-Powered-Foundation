@@ -49,7 +49,3 @@ Gulp build
 ```
 
 > You can also use the 'build' command with option flag(--production) for distribution ready.
-
-```bash
-Gulp build --production 
-```
