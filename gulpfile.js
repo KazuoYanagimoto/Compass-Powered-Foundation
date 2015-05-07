@@ -1,9 +1,6 @@
-// FOUNDATION FOR APPS TEMPLATE GULPFILE
-// -------------------------------------
-// This file processes all of the assets in the "client" folder, combines them with the Foundation for Apps assets, and outputs the finished files in the "build" folder as a finished app.
+// This file processes all of files in the "app" folder, and outputs files in the "build" folder for distribution ready.
 
-// 1. LIBRARIES
-// - - - - - - - - - - - - - - -
+// ---------- Libraries ----------
 
 var $ = require('gulp-load-plugins')();
 var argv = require('yargs').argv;
@@ -11,14 +8,38 @@ var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var rimraf = require('gulp-rimraf');
 var runSequence = require('run-sequence');
+// ------------------------------
+// var clean = require('gulp-clean');
+// var es = require('event-stream');
+// var sass = require('gulp-sass');
+// var compass = require('gulp-compass');
+// var sass = require('gulp-ruby-sass');
+// var clean = require('gulp-clean');
+var watch = require('gulp-watch');
+var concat = require('gulp-concat');
+var uglify = require('gulp-uglify');
+var rename = require("gulp-rename");
+// var connect = require('gulp-connect');
+// var plumber = require('gulp-plumber');
+var imagemin = require('gulp-imagemin');
+var webserver = require('gulp-webserver');
+var minifyCss = require('gulp-minify-css');
+// var sourcemaps = require('gulp-sourcemaps');
+// var livereload = require('gulp-livereload');
+// var autoprefixer = require('gulp-autoprefixer');
+var minifyHTML = require('gulp-minify-html');
+// var fileinclude = require('gulp-file-include');
+// var newer = require('gulp-newer');
+var changed = require('gulp-changed');
+var gutil = require('gulp-util');
+// var jshint = require('gulp-jshint');
 
 // Check for --production flag
 var isProduction = (argv.production);
 // Default value for conditions
 var defaultVal = true;
 
-// 2. FILE PATHS
-// - - - - - - - - - - - - - - -
+// ---------- File Paths ----------
 
 var config = {
   dev: 'app',
@@ -44,19 +65,12 @@ var paths = {
   }
 };
 
-// 3. TASKS
-// - - - - - - - - - - - - - - -
+// ---------- Tasks ----------
 
 // Cleans the build directory
 gulp.task('clean:server', function() {
   return gulp.src(config.dist + '/*', { read: false })
     .pipe(rimraf({ force: true }));
-});
-
-// Copies .html template
-gulp.task('copy:template', function() {
-  return gulp.src(config.app + '/*.html')
-    .pipe(gulp.dest(config.dist));
 });
 
 // Compile Sass to CSS using Compass
@@ -66,10 +80,10 @@ gulp.task('compass', function() {
     defaultVal = false;
   }
   return gulp.src(paths.styles.src)
-    .pipe(plumber())
-    .pipe(compass({
+    .pipe($.plumber())
+    .pipe($.compass({
       config_file: './config.rb',
-      css: '.tmp/styles',
+      css: 'build/styles',
       sass: 'app/styles',
       style: (isProduction ? 'compressed' : 'nested'),
       comments: defaultVal,
@@ -82,14 +96,14 @@ gulp.task('compass', function() {
 // Run gulp stylish with flag(--production)
 gulp.task('stylish', ['compass'], function() {
   return gulp.src(paths.styles.dest + '/*.css')
-    .pipe(sourcemaps.init())
-    .pipe(autoprefixer({
+    .pipe($.sourcemaps.init())
+    .pipe($.autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
     }))
     .pipe($.if(!isProduction, $.sourcemaps.write('./')))
     .pipe(gulp.dest(paths.styles.dest))
-    .pipe(livereload());
+    .pipe($.livereload());
 });
 
 // Concatenates files
@@ -187,17 +201,16 @@ gulp.task('watch', function () {
   gulp.watch(config.dev + '/*.html', ['duplicate:html']);
 });
 
-// 4. Custom Tasks
-// - - - - - - - - - - - - - - -
+// ---------- Custom Tasks ----------
 
 // Dev task
-gulp.task('dev', ['initial task'], function() {
-  // runSequence('task');
+gulp.task('dev', ['clean:server'], function() {
+  runSequence('copy:fonts', 'duplicate:images', 'duplicate:html');
 });
 // Serve task
 gulp.task('serve', function() {
   var launchApp = runSequence('server', 'watch');
-  setTimeout(launchApp, 500);
+  setTimeout(launchApp, 1500);
 });
 // Build task with flag(--production)
 gulp.task('build', ['clean:server'], function() {
@@ -205,5 +218,5 @@ gulp.task('build', ['clean:server'], function() {
 });
 // Default task
 gulp.task('default', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'server', 'watch');
+  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'serve');
 });
