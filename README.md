@@ -9,7 +9,7 @@ You'll need the following applications installed to get started.
 
   - [Node.js](http://nodejs.org): Use the installer for your OS.
   - [Git](http://git-scm.com/downloads): Use the installer for your OS.
-  - [Gulp](http://gulpjs.com/) and [Bower](http://bower.io): Run `npm install -g gulp bower`.
+  - [Gulp](http://gulpjs.com/) and [Bower](http://bower.io): To install Gulp and Bower, run `npm install -g gulp bower`.
 
 ## Get Started
 
@@ -49,3 +49,7 @@ Gulp build
 ```
 
 > You can also use the 'build' command with option flag(--production) for distribution ready.
+
+```bash
+Gulp build --production 
+```
