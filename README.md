@@ -1,6 +1,7 @@
 # Compass-powered Foundation
 
-> This is the default project template for creating web-apps, powered by Compass-powered Foundation and Gulp.  
+> This is the default project template for creating web-apps, powered by Compass-powered Foundation and Gulp. 
+
 It provides you with a basic template to get started with Foundation, Compass and Gulp build system.
 
 ## Requirements
