@@ -33,14 +33,14 @@ npm install
 bower install
 ```
 
-3: You are ready to start on your project, run:
+3: You are ready to go. Start your project, by run:
 
 ```bash
 Gulp
 ```
 
-> This will compile the Sass(by using Compass) and assembles all the necessary files to launch your web-app with localhost:8080. 
-When you change files, the appropriate Gulp task will run to build new files for you.
+> This will compile the Sass(by using Compass) and assemble all the necessary files to launch your web-app with localhost:8080. 
+When you change files, the appropriate Gulp tasks will run to build new files.
 
 4: To run the compiling process without watching any files, use the `build` command.
 
