@@ -8,31 +8,7 @@ var gulp = require('gulp');
 var gulpif = require('gulp-if');
 var rimraf = require('gulp-rimraf');
 var runSequence = require('run-sequence');
-// ------------------------------
-// var clean = require('gulp-clean');
-// var es = require('event-stream');
-// var sass = require('gulp-sass');
-// var compass = require('gulp-compass');
-// var sass = require('gulp-ruby-sass');
-// var clean = require('gulp-clean');
-var watch = require('gulp-watch');
-var concat = require('gulp-concat');
-var uglify = require('gulp-uglify');
-var rename = require("gulp-rename");
-// var connect = require('gulp-connect');
-// var plumber = require('gulp-plumber');
-var imagemin = require('gulp-imagemin');
-var webserver = require('gulp-webserver');
-var minifyCss = require('gulp-minify-css');
-// var sourcemaps = require('gulp-sourcemaps');
-// var livereload = require('gulp-livereload');
-// var autoprefixer = require('gulp-autoprefixer');
 var minifyHTML = require('gulp-minify-html');
-// var fileinclude = require('gulp-file-include');
-// var newer = require('gulp-newer');
-var changed = require('gulp-changed');
-var gutil = require('gulp-util');
-// var jshint = require('gulp-jshint');
 
 // Check for --production flag
 var isProduction = (argv.production);
@@ -56,18 +32,18 @@ var paths = {
     dest: config.dist + '/imges'
   },
   scripts: {
-    src: config.dev +  '/scripts/*.js',
+    src: config.dev +  '/scripts/**',
     dest: config.dist + '/scripts'
   },
   styles: {
-    src: config.dev +  '/styles/*.scss',
+    src: config.dev +  '/styles/**',
     dest: config.dist + '/styles'
   }
 };
 
 // ---------- Tasks ----------
 
-// Cleans the build directory
+// Clean up the build directory
 gulp.task('clean:server', function() {
   return gulp.src(config.dist + '/*', { read: false })
     .pipe(rimraf({ force: true }));
@@ -79,7 +55,7 @@ gulp.task('compass', function() {
   if(isProduction){
     defaultVal = false;
   }
-  return gulp.src(paths.styles.src)
+  return gulp.src(paths.styles.src + '/*.scss')
     .pipe($.plumber())
     .pipe($.compass({
       config_file: './config.rb',
@@ -93,7 +69,7 @@ gulp.task('compass', function() {
 });
 
 // Gulp task Compass >Autoprefixer
-// Run gulp stylish with flag(--production)
+// Run gulp stylish with flag(--production) for distribution ready
 gulp.task('stylish', ['compass'], function() {
   return gulp.src(paths.styles.dest + '/*.css')
     .pipe($.sourcemaps.init())
@@ -109,28 +85,28 @@ gulp.task('stylish', ['compass'], function() {
 // Concatenates files
 // https://www.npmjs.com/package/gulp-concat
 gulp.task('concat', function() {
-  return gulp.src(paths.scripts.src)
-    .pipe(sourcemaps.init())
-    .pipe(concat('main.js'))
+  return gulp.src(paths.scripts.src + '/*.js')
+    .pipe($.sourcemaps.init())
+    .pipe($.concat('main.js'))
     .pipe($.if(!isProduction, $.sourcemaps.write('./')))
     .pipe(gulp.dest(paths.scripts.dest));
 });
 
 // Gulp task Concat >Uglify
-// Run gulp compress with flag(--production)
+// Run gulp compress with flag(--production) for distribution ready
 gulp.task('compress', ['concat'], function() {
   return gulp.src(paths.scripts.dest + '/*.js')
-    .pipe(plumber())
+    .pipe($.plumber())
     .pipe($.if(isProduction, $.uglify({
       compress: {
         drop_console: true
       }
     })))
     .pipe(gulp.dest(paths.scripts.dest))
-    .pipe(livereload());
+    .pipe($.livereload());
 });
 
-// Copies everything in the client folder except templates, Sass, and JS
+// Copies everything in the app/fonts folder
 gulp.task('copy:fonts', function() {
   return gulp.src(paths.fonts.src, {
   // base: './app/'
@@ -138,7 +114,7 @@ gulp.task('copy:fonts', function() {
     .pipe(gulp.dest(paths.fonts.dest));
 });
 
-// Copies everything in the client folder except templates, Sass, and JS
+// Copies everything in the app/images folder
 gulp.task('copy:images', function() {
   return gulp.src(paths.images.src, {
   // base: './app/'
@@ -158,12 +134,12 @@ gulp.task('copy:template', function() {
 // Run gulp duplicate with flag(--production)
 gulp.task('duplicate:images', ['copy:images'], function() {
   return gulp.src(paths.images.src + '/*.{png,jpg,gif,svg}')
-    .pipe($.if(isProduction, imagemin({
+    .pipe($.if(isProduction, $.imagemin({
         progressive: true,
         svgoPlugins: [{removeViewBox: false}]
     })))
     .pipe(gulp.dest(paths.images.dest))
-    .pipe(livereload());
+    .pipe($.livereload());
 });
 
 // Gulp task copy:template >minify-html
@@ -171,32 +147,39 @@ gulp.task('duplicate:images', ['copy:images'], function() {
 gulp.task('duplicate:html', ['copy:template'], function() {
   return gulp.src(config.dist + '/*.html')
     .pipe($.if(isProduction, minifyHTML({
-    conditionals: true,
-    spare:true
+      conditionals: true,
+      spare:true
     })))
     .pipe(gulp.dest(config.dist))
-    .pipe(livereload());
+    .pipe($.livereload());
 });
 
 // Gulp plugin to run a local webserver with LiveReload
 // https://www.npmjs.com/package/gulp-webserver
 gulp.task('server', function() {
   return gulp.src(config.dist)
-    .pipe(webserver({
-    port: 8080,
-    host: 'localhost',
-    fallback: 'index.html',
-    livereload: true,
-    open: true
+    .pipe($.webserver({
+      port: 8000,
+      host: 'localhost',
+      fallback: 'index.html',
+      livereload: true,
+      open: true,
+      proxies: {
+        options: {
+          headers: {
+            'Content-Type': 'application/javascript'
+          }
+        }
+      }
     }));
 });
 
 // Watch, that actually is an endless stream
 // https://www.npmjs.com/package/gulp-watch
 gulp.task('watch', function () {
-  livereload.listen();
-  gulp.watch(paths.scripts.src, ['compress']);
-  gulp.watch(paths.styles.src, ['stylish']);
+  $.livereload.listen();
+  gulp.watch(paths.scripts.src + '/*.js', ['compress']);
+  gulp.watch(paths.styles.src + '/*.scss', ['stylish']);
   gulp.watch(paths.images.src + '/*.{png,jpg,gif,svg}', ['duplicate:images']);
   gulp.watch(config.dev + '/*.html', ['duplicate:html']);
 });
