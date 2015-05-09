@@ -1,15 +1,15 @@
 # Compass-powered Foundation
 
-> This is the default project template for creating web-apps, powered by Compass-powered Foundation and Gulp. 
+This is the default project template for creating web-apps, powered by Compass-powered Foundation and Gulp. 
 
-It provides you with a basic template to get started with Foundation, Compass and Gulp build system.
+> It provides you with a basic template to get started with Foundation, Compass and Gulp build system.
 
 ## Requirements
 
 You'll need the following applications installed to get started.
 
-  - [Node.js](http://nodejs.org): Use the installer for your OS.
   - [Git](http://git-scm.com/downloads): Use the installer for your OS.
+  - [Node.js](http://nodejs.org): Use the installer for your OS.
   - [Gulp](http://gulpjs.com/) and [Bower](http://bower.io): To install Gulp and Bower, run `npm install -g gulp bower`.
 
 ## Get Started
@@ -40,8 +40,8 @@ bower install
 Gulp
 ```
 
-> This will compile the Sass(by using Compass) and assemble all the necessary files to launch your web-app with localhost:8080. 
-When you change files, the appropriate Gulp tasks will run to build new files.
+> This will compile Sass(by using Compass) and assemble all the necessary files to launch your web-app with localhost:8000. 
+When you change files, the appropriate Gulp tasks will run automatically.
 
 4: To run the compiling process without watching any files, use the `build` command.
 
