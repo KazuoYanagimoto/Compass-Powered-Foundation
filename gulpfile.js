@@ -29,7 +29,7 @@ var paths = {
   },
   images: {
     src: config.dev + '/images/**',
-    dest: config.dist + '/imges'
+    dest: config.dist + '/images'
   },
   scripts: {
     src: config.dev +  '/scripts/**',
@@ -108,25 +108,19 @@ gulp.task('compress', ['concat'], function() {
 
 // Copies everything in the app/fonts folder
 gulp.task('copy:fonts', function() {
-  return gulp.src(paths.fonts.src, {
-  // base: './app/'
-  })
+  return gulp.src(paths.fonts.src)
     .pipe(gulp.dest(paths.fonts.dest));
 });
 
 // Copies everything in the app/images folder
 gulp.task('copy:images', function() {
-  return gulp.src(paths.images.src, {
-  // base: './app/'
-  })
+  return gulp.src(paths.images.src)
     .pipe(gulp.dest(paths.images.dest));
 });
 
 // Copies all .html in the app folder
 gulp.task('copy:template', function() {
-  return gulp.src(config.dev + '/*.html', {
-  // base: './app/'
-  })
+  return gulp.src(config.dev + '/*.html')
     .pipe(gulp.dest(config.dist));
 });
 
