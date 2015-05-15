@@ -37,7 +37,7 @@ bower install
 3: You are ready to go. Start your project, by run:
 
 ```bash
-Gulp
+gulp
 ```
 
 > This will compile Sass(by using Compass) and assemble all the necessary files to launch your web-app with localhost:8000. 
@@ -46,7 +46,7 @@ When you change files, the appropriate Gulp tasks will run automatically.
 4: To run the compiling process without watching any files, use the `build` command.
 
 ```bash
-Gulp build
+gulp build
 ```
 
 > You can also use the 'build' command with option flag(--production) for distribution ready.
