@@ -38,7 +38,17 @@ var paths = {
   styles: {
     src: config.dev +  '/styles/**',
     dest: config.dist + '/styles'
-  }
+  },
+  concat: [
+    'app/scripts/_init.js',
+    'app/scripts/first.js',
+    'app/scripts/second.js'
+  ],
+  bower: [
+    'bower_components/modernizr/modernizr.js',
+    'bower_components/jquery/dist/jquery.min.js',
+    'bower_components/foundation/js/foundation.min.js'
+  ]
 };
 
 // ---------- Tasks ----------
@@ -85,7 +95,7 @@ gulp.task('stylish', ['compass'], function() {
 // Concatenates files
 // https://www.npmjs.com/package/gulp-concat
 gulp.task('concat', function() {
-  return gulp.src(paths.scripts.src + '/*.js')
+  return gulp.src(paths.concat)
     .pipe($.sourcemaps.init())
     .pipe($.concat('main.js'))
     .pipe($.if(!isProduction, $.sourcemaps.write('./')))
@@ -104,6 +114,12 @@ gulp.task('compress', ['concat'], function() {
     })))
     .pipe(gulp.dest(paths.scripts.dest))
     .pipe($.livereload());
+});
+
+// Copies required bower_components
+gulp.task('copy:bower', function() {
+  return gulp.src(paths.bower)
+    .pipe(gulp.dest(config.dist + '/bower_components'));
 });
 
 // Copies everything in the app/fonts folder
@@ -182,7 +198,7 @@ gulp.task('watch', function () {
 
 // Dev task
 gulp.task('dev', ['clean:server'], function() {
-  runSequence('copy:fonts', 'duplicate:images', 'duplicate:html');
+  runSequence('compass');
 });
 // Serve task
 gulp.task('serve', function() {
@@ -191,9 +207,9 @@ gulp.task('serve', function() {
 });
 // Build task with flag(--production)
 gulp.task('build', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html');
+  runSequence('stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html');
 });
 // Default task
 gulp.task('default', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'serve');
+  runSequence('stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'serve');
 });
