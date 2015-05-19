@@ -1,7 +1,19 @@
-// Global styling
-$color-primary: blue;
+// Global style
+$color-primary: hotpink;
+$color-secondary: aquamarine;
 
-body{
-  // background: lighten(blue, 10%);
-  @include contrasted($color-primary);
+body {
+  padding-top: 50px;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  .heart {
+    color: $color-primary;
+    &:hover {
+      color: $color-secondary;
+    }
+  }
 }
