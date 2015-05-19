@@ -6,9 +6,21 @@
     <title>Compass-Powered Foundation</title>
     <link rel="stylesheet" href="styles/main.css" />
     <!-- <link rel="shortcut icon" type="image/x-icon" href="favicon.ico"> -->
-    <!-- <script src="../bower_components/modernizr/modernizr.js"></script> -->
+    <script src="bower_components/modernizr.js"></script>
   </head>
   <body>
+    <div class="fixed">
+      <nav class="top-bar" data-topbar role="navigation">
+        <ul class="title-area">
+          <li class="name">
+            <h1><a href="#" target="_self">My Site</a></h1>
+          </li>
+           <!-- Remove the class "menu-icon" to get rid of menu icon. Take out "Menu" to just have icon alone -->
+          <li class="toggle-topbar menu-icon"><a href="#" target="_self"><span>Menu</span></a></li>
+        </ul>
+      </nav>
+    </div>
+
     <div class="row">
       <div class="large-12 columns text-center">
         <h1>Welcome to Foundation</h1>
@@ -50,8 +62,12 @@
       </div>
     </div>
 
-    <!-- <script src="../bower_components/jquery/dist/jquery.min.js"></script> -->
-    <!-- <script src="../bower_components/foundation/js/foundation.min.js"></script> -->
+    <footer>
+      <p>Built with <span><i class="fa fa-heart heart"></i></span></p>
+    </footer>
+
+    <script src="bower_components/jquery.min.js"></script>
+    <script src="bower_components/foundation.min.js"></script>
     <script src="scripts/main.js"></script>
   </body>
 </html>
