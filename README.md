@@ -12,7 +12,7 @@ You'll need the following applications installed to get started.
   - [Node.js](http://nodejs.org): Use the installer for your OS.
   - [Gulp](http://gulpjs.com/) and [Bower](http://bower.io): To install Gulp and Bower, run `npm install -g gulp bower`.
 
-## RubyGems
+You'll also need to install following Ruby applications.
 
 As a basic requirement for Gulp task(s), you need to install "Sass", "Compass" and "Sass-globbing".  
 To install [Sass](http://sass-lang.com/install), [Compass](http://compass-style.org/install/) and [Sass-globbing](https://github.com/chriseppstein/sass-globbing/blob/master/README.markdown). Please, follow instructions.  
