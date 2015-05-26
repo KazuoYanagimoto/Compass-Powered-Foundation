@@ -59,6 +59,14 @@ gulp.task('clean:server', function() {
     .pipe(rimraf({ force: true }));
 });
 
+// CSScomb plugin for Gulp.js.
+// https://github.com/koistya/gulp-csscomb
+gulp.task('csscomb', function() {
+  return gulp.src(paths.styles.src + '/*.scss')
+    .pipe($.csscomb())
+    .pipe(gulp.dest(config.dev + '/styles'));
+});
+
 // Compile Sass to CSS using Compass
 // https://www.npmjs.com/package/gulp-compass
 gulp.task('compass', function() {
@@ -198,7 +206,7 @@ gulp.task('watch', function () {
 
 // Dev task
 gulp.task('dev', ['clean:server'], function() {
-  runSequence('compass');
+  runSequence('csscomb');
 });
 // Serve task
 gulp.task('serve', function() {
@@ -207,7 +215,7 @@ gulp.task('serve', function() {
 });
 // Build task with flag(--production)
 gulp.task('build', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html');
+  runSequence('csscomb', 'stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html');
 });
 // Default task
 gulp.task('default', ['clean:server'], function() {
