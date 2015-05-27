@@ -1,10 +1,5 @@
 // -- Import Sass Framework/Libraries
-@import 'compass/reset';
-@import 'compass';
-// -- Import custom variables --
-@import 'custom/**';
-// -- Import Framework --
-@import 'foundation';
-@import 'font-awesome';
+@import "compass";
 // -- Import partials --
-@import 'base/**';
+@import "custom/**";
+@import "base/**";
