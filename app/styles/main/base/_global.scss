@@ -1,0 +1,16 @@
+// Global Style
+body {
+  padding-top: 50px;
+}
+footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  .heart {
+    color: $color-primary;
+    &:hover {
+      color: $color-secondary;
+    }
+  }
+}
