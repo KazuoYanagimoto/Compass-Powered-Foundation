@@ -10,7 +10,7 @@ var rimraf = require('gulp-rimraf');
 var runSequence = require('run-sequence');
 var minifyHTML = require('gulp-minify-html');
 
-// Check for --production flag
+// Define option flag(--production)
 var isProduction = (argv.production);
 // Default value for conditions
 var defaultVal = true;
@@ -36,8 +36,14 @@ var paths = {
     dest: config.dist + '/scripts'
   },
   styles: {
-    src: config.dev +  '/styles/**',
-    dest: config.dist + '/styles'
+    main: {
+      src: config.dev +  '/styles/main/**',
+      dest: config.dist + '/styles'
+    },
+    vendor: {
+      src: config.dev +  '/styles/vendor/**',
+      dest: config.dist + '/styles'
+    }
   },
   concat: [
     'app/scripts/_init.js',
@@ -62,41 +68,61 @@ gulp.task('clean:server', function() {
 // CSScomb plugin for Gulp.js.
 // https://github.com/koistya/gulp-csscomb
 gulp.task('csscomb', function() {
-  return gulp.src(paths.styles.src + '/*.scss')
+  return gulp.src(paths.styles.main.src + '/*.scss')
     .pipe($.csscomb())
-    .pipe(gulp.dest(config.dev + '/styles'));
+    .pipe(gulp.dest(config.dev + '/styles/main'));
 });
 
 // Compile Sass to CSS using Compass
 // https://www.npmjs.com/package/gulp-compass
-gulp.task('compass', function() {
+gulp.task('compass:main', function() {
   if(isProduction){
     defaultVal = false;
   }
-  return gulp.src(paths.styles.src + '/*.scss')
+  return gulp.src(paths.styles.main.src + '/*.scss')
     .pipe($.plumber())
     .pipe($.compass({
       config_file: './config.rb',
       css: 'build/styles',
-      sass: 'app/styles',
+      sass: 'app/styles/main',
       style: (isProduction ? 'compressed' : 'nested'),
       comments: defaultVal,
       sourcemap: defaultVal
     }))
-    .pipe(gulp.dest(paths.styles.dest));
+    .pipe(gulp.dest(paths.styles.main.dest));
+});
+
+// Compile Sass to CSS using Compass
+// https://www.npmjs.com/package/gulp-compass
+gulp.task('compass:vendor', function() {
+  if(isProduction){
+    defaultVal = false;
+  }
+  return gulp.src(paths.styles.vendor.src + '/*.scss')
+    .pipe($.plumber())
+    .pipe($.compass({
+      config_file: './config.rb',
+      css: 'build/styles',
+      sass: 'app/styles/vendor',
+      style: (isProduction ? 'compressed' : 'nested'),
+      comments: defaultVal,
+      sourcemap: defaultVal
+    }))
+    .pipe(gulp.dest(paths.styles.vendor.dest))
+    .pipe($.livereload());
 });
 
 // Gulp task Compass >Autoprefixer
 // Run gulp stylish with flag(--production) for distribution ready
-gulp.task('stylish', ['compass'], function() {
-  return gulp.src(paths.styles.dest + '/*.css')
+gulp.task('stylish', ['compass:main'], function() {
+  return gulp.src(paths.styles.main.dest + '/main.css')
     .pipe($.sourcemaps.init())
     .pipe($.autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
     }))
     .pipe($.if(!isProduction, $.sourcemaps.write('./')))
-    .pipe(gulp.dest(paths.styles.dest))
+    .pipe(gulp.dest(paths.styles.main.dest))
     .pipe($.livereload());
 });
 
@@ -196,8 +222,9 @@ gulp.task('server', function() {
 // https://www.npmjs.com/package/gulp-watch
 gulp.task('watch', function () {
   $.livereload.listen();
+  gulp.watch(paths.styles.vendor.src + '/*.scss', ['compass:vendor']);
+  gulp.watch(paths.styles.main.src + '/*.scss', ['stylish']);
   gulp.watch(paths.scripts.src + '/*.js', ['compress']);
-  gulp.watch(paths.styles.src + '/*.scss', ['stylish']);
   gulp.watch(paths.images.src + '/*.{png,jpg,gif,svg}', ['duplicate:images']);
   gulp.watch(config.dev + '/*.html', ['duplicate:html']);
 });
@@ -206,7 +233,7 @@ gulp.task('watch', function () {
 
 // Dev task
 gulp.task('dev', ['clean:server'], function() {
-  runSequence('csscomb');
+  // runSequence('');
 });
 // Serve task
 gulp.task('serve', function() {
@@ -215,9 +242,9 @@ gulp.task('serve', function() {
 });
 // Build task with flag(--production)
 gulp.task('build', ['clean:server'], function() {
-  runSequence('csscomb', 'stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html');
+  runSequence('csscomb', 'compass:vendor', 'stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html');
 });
 // Default task
 gulp.task('default', ['clean:server'], function() {
-  runSequence('stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'serve');
+  runSequence('csscomb', 'compass:vendor', 'stylish', 'compress', 'copy:bower', 'copy:fonts', 'duplicate:images', 'duplicate:html', 'serve');
 });
