@@ -233,7 +233,7 @@ gulp.task('watch', function () {
 
 // Dev task
 gulp.task('dev', ['clean:server'], function() {
-  // runSequence('');
+  // runSequence('task');
 });
 // Serve task
 gulp.task('serve', function() {
